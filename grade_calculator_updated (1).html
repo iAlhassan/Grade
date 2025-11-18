@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حساب الدرجة النهائية للاختبار الشامل</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .info-box {
+            background: #f8f9ff;
+            border-right: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-right: 0;
+        }
+
+        .info-box li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input[type="number"]:invalid {
+            border-color: #dc3545;
+        }
+
+        .unit {
+            color: #666;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .calculate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-box {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result-box.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+
+        .result-box.failure {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+
+        .result-box h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .result-box.success h3 {
+            color: #28a745;
+        }
+
+        .result-box.failure h3 {
+            color: #dc3545;
+        }
+
+        .result-item {
+            margin: 12px 0;
+            font-size: 16px;
+            line-height: 1.8;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 6px;
+        }
+
+        .result-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .final-grade {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 20px;
+            border-top: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            text-align: center;
+        }
+
+        .separator {
+            height: 2px;
+            background: rgba(0, 0, 0, 0.05);
+            margin: 15px 0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .input-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            input[type="number"] {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>حساب الدرجة النهائية للاختبار الشامل</h1>
+
+        <div class="info-box">
+            <h3>📋 الشروط والمعادلة:</h3>
+            <ul>
+                <li><strong>١.</strong> يجب الحصول على 60 فأعلى في الاختبار الشامل</li>
+                <li><strong>٢.</strong> الدرجة الموزونة للمعهد (30%): المعدل بالمعهد × 0.3</li>
+                <li><strong>٣.</strong> الدرجة الموزونة للاختبار (70%): درجة الاختبار × 0.7</li>
+                <li><strong>٤.</strong> الدرجة النهائية يجب أن تكون 60 فأعلى للنجاح</li>
+            </ul>
+        </div>
+
+        <form id="gradeForm">
+            <div class="form-group">
+                <label for="cumulativeGPA">المعدل التراكمي (من 5.00):</label>
+                <div class="input-wrapper">
+                    <input type="number" id="cumulativeGPA" min="0" max="5" step="0.01" required 
+                           placeholder="أدخل المعدل التراكمي">
+                    <span class="unit">من 5.00</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="comprehensiveExam">درجة الاختبار الشامل (من 100):</label>
+                <div class="input-wrapper">
+                    <input type="number" id="comprehensiveExam" min="60" max="100" step="0.01" required 
+                           placeholder="أدخل درجة الاختبار الشامل">
+                    <span class="unit">من 60 إلى 100</span>
+                </div>
+                <div class="error-message" id="examError">⚠️ درجة الاختبار يجب أن تكون بين 60 و 100</div>
+            </div>
+
+            <button type="submit" class="calculate-btn" id="submitBtn">احسب الدرجة النهائية</button>
+        </form>
+
+        <div id="result" class="result-box"></div>
+    </div>
+
+    <script>
+        const cumulativeGPAInput = document.getElementById('cumulativeGPA');
+        const comprehensiveExamInput = document.getElementById('comprehensiveExam');
+        const examErrorMsg = document.getElementById('examError');
+        const submitBtn = document.getElementById('submitBtn');
+        const gradeForm = document.getElementById('gradeForm');
+
+        // Validation for comprehensive exam input
+        comprehensiveExamInput.addEventListener('input', function() {
+            const value = parseFloat(this.value);
+
+            if (this.value === '') {
+                examErrorMsg.classList.remove('show');
+                submitBtn.disabled = false;
+                return;
+            }
+
+            if (isNaN(value) || value < 60 || value > 100) {
+                examErrorMsg.classList.add('show');
+                submitBtn.disabled = true;
+                this.style.borderColor = '#dc3545';
+            } else {
+                examErrorMsg.classList.remove('show');
+                submitBtn.disabled = false;
+                this.style.borderColor = '#e0e0e0';
+            }
+        });
+
+        // Form submission
+        gradeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const cumulativeGPA = parseFloat(cumulativeGPAInput.value);
+            const comprehensiveExam = parseFloat(comprehensiveExamInput.value);
+            const resultDiv = document.getElementById('result');
+
+            // Validate inputs
+            if (isNaN(cumulativeGPA) || isNaN(comprehensiveExam)) {
+                resultDiv.innerHTML = '<h3>⚠️ خطأ في الإدخال</h3><p>الرجاء إدخال قيم صحيحة</p>';
+                resultDiv.className = 'result-box failure';
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            if (cumulativeGPA < 0 || cumulativeGPA > 5) {
+                resultDiv.innerHTML = '<h3>⚠️ خطأ في الإدخال</h3><p>المعدل التراكمي يجب أن يكون بين 0 و 5.00</p>';
+                resultDiv.className = 'result-box failure';
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            if (comprehensiveExam < 60 || comprehensiveExam > 100) {
+                resultDiv.innerHTML = '<h3>⚠️ خطأ في الإدخال</h3><p>درجة الاختبار يجب أن تكون بين 60 و 100</p>';
+                resultDiv.className = 'result-box failure';
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            // Convert GPA from 5.00 scale to 100 scale
+            const instituteGradeConverted = (cumulativeGPA / 5) * 100;
+
+            // Calculate weighted grades using new formula
+            const instituteWeighted = instituteGradeConverted * 0.3;
+            const examWeighted = comprehensiveExam * 0.7;
+            const finalGrade = instituteWeighted + examWeighted;
+
+            // Check if final grade meets requirement
+            const isPassing = finalGrade >= 60;
+
+            resultDiv.innerHTML = `
+                <h3>${isPassing ? '✅ مستوفي للشروط' : '❌ غير مستوفي للشروط'}</h3>
+
+                <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <strong style="color: #0066cc;">📊 تحويل المعدل التراكمي:</strong>
+                    <div style="margin-top: 8px; font-size: 15px;">
+                        (${cumulativeGPA.toFixed(2)} ÷ 5) × 100 = <span class="result-value">${instituteGradeConverted.toFixed(2)}</span>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <strong>المعدل التراكمي (الأصلي):</strong>
+                    <span class="result-value">${cumulativeGPA.toFixed(2)} من 5.00</span>
+                </div>
+
+                <div class="result-item">
+                    <strong>المعدل بعد التحويل إلى 100:</strong>
+                    <span class="result-value">${instituteGradeConverted.toFixed(2)}</span>
+                </div>
+
+                <div class="result-item">
+                    <strong>الدرجة الموزونة للمعهد (30%):</strong>
+                    <div style="margin-top: 5px; font-size: 14px;">
+                        ${instituteGradeConverted.toFixed(2)} × 0.3 = <span class="result-value">${instituteWeighted.toFixed(2)}</span>
+                    </div>
+                </div>
+
+                <div class="separator"></div>
+
+                <div class="result-item">
+                    <strong>درجة الاختبار الشامل:</strong>
+                    <span class="result-value">${comprehensiveExam.toFixed(2)}</span>
+                </div>
+
+                <div class="result-item">
+                    <strong>الدرجة الموزونة للاختبار (70%):</strong>
+                    <div style="margin-top: 5px; font-size: 14px;">
+                        ${comprehensiveExam.toFixed(2)} × 0.7 = <span class="result-value">${examWeighted.toFixed(2)}</span>
+                    </div>
+                </div>
+
+                <div class="final-grade" style="color: ${isPassing ? '#28a745' : '#dc3545'};">
+                    <div style="margin-bottom: 10px;">الدرجة النهائية</div>
+                    <div style="font-size: 28px;">
+                        ${finalGrade.toFixed(2)} / 100
+                    </div>
+                    <div style="margin-top: 15px; font-size: 18px;">
+                        ${isPassing ? '✅ ناجح' : '❌ راسب'}
+                    </div>
+                </div>
+            `;
+
+            resultDiv.className = isPassing ? 'result-box success' : 'result-box failure';
+            resultDiv.style.display = 'block';
+
+            // Smooth scroll to result
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+    </script>
+</body>
+</html>
